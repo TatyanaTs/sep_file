@@ -1,5 +1,8 @@
 package sep_file;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 class sep_file {
     public static void splitFile(File f, String fn) throws IOException {
@@ -15,7 +18,12 @@ class sep_file {
             while ((bytesAmount = bis.read(buffer)) > 0) {
                 //write each chunk of data into separate file with different number in name
                 String filePartName = String.format("%s.%03d", fn, partCounter++);
-                File newFile = new File(f.getParent(), filePartName);
+                String theDir = f.getParent() + "\\" + fn;
+                Path path = Paths.get(theDir);
+                if (!Files.exists(path)) {
+                    Files.createDirectory(path);
+                }
+                File newFile = new File(theDir, filePartName);
                 try (FileOutputStream out = new FileOutputStream(newFile)) {
                     out.write(buffer, 0, bytesAmount);
                 }
